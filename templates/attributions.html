@@ -1,0 +1,26 @@
+{% extends "_layout.html" %}
+
+{%- block title -%}
+mic0.dev - Attributions
+{%- endblock -%}
+
+{%- block content -%}
+<style>
+  /*<![CDATA[*/
+    {%~include "_ascii.css"~%}
+    {%~include "_article.css"~%}
+  /*]]>*/
+</style>
+<section class="article container">
+  <h1>Attributions</h1>
+  <p>Throught my articles, i use ASCII art sourced from <a href="https://aahub.org" target="_blank"
+    rel="nofollow noopener noreferrer" title="AAHUB homepage">AAHUB</a>.</p>
+  <p></p>
+  <br />
+  {{ content | safe }}
+</section>
+<section class="article-sig container">
+  {%~include "ascii/02_article_sig2.html"~%}
+</section>
+{%- endblock -%}
+

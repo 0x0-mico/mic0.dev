@@ -1,0 +1,151 @@
+<p>Websites have historically only gotten fatter. The average website now hovers around 2.5MB (google it). That's in
+  part
+  due to big media used, but it's also the tooling.</p>
+<p>For the past 15 years+ the meta has been to build SPAs - single page applications. This is largely thanks to the
+  advent of fat javascript libraries which moved the solution space from the yucky server side to the yummy client side
+  where everything can be done on the users' computers instead.
+</p>
+<blockquote><i>Leave some bandwidth and CPU cycles for the phone users on the spotty WiFi fatso!</i></blockquote>
+<p>I would wager 99% of the web does not need the reactivity of modern frameworks. Maybe 99.9% even. Yet they are all
+  around us.</p>
+<p>Boomer mentality aside - lean websites are faster to load, offer
+  better UX and are actually in line with what makes browsers snappy and happy.</p>
+<p>So how did we get to the point where it feels like half of the web are React apps being spat out from a "server"
+  rendering javascript on an
+  engine running inside Docker inside a virtual server on a server like a matryoshka of waste?</p>
+
+<h2>SPA revolution and History API</h2>
+<p>I remember when <code>pushState()</code> came out ... a simple but powerful function that lets you control the
+  browser's URL line and magically
+  route the user around
+  pages. It was and it still is fairly simple to write your own app router, but of course no one does that anymore
+  manually
+  because you expect $THE_FRAMEWORK to do that for you.</p>
+<p>Frontend frameworks usually come with their own app routers, but all of these basically just use the <a
+    href="https://developer.mozilla.org/en-US/docs/Web/API/History_API" target="_blank"
+    rel="nofollow noopener noreferrer" title="History API on MDN">History API</a> or rather the <code>pushState()</code>
+  function of the History API to change
+  the url bar in the browser. It's a neat trick, not an actual route.
+</p>
+<p>For this to work with your website, the server usually just
+  returns the same <code>index.html</code> on each route and the javascript then quickly reads the route and constructs
+  the correct page "on
+  the
+  fly" inside your browser. Thanks to your Ryzen 9900 XT MEGARIPPER, this all happens so fast you barely notice it.
+</p>
+
+<section>
+<pre class="ascii-graphic aahub_light">
+　　　　　　　　　　　　＿　＿ _
+　　　　　　　　　_ r「　 i　」 _　i ｀y､
+　　　　　　　　f　 k　 ´　　　　＞ ､7ゝ
+　　　　　　　「　У　　　　　　　　　 ヽ'
+　　　　　　く Ｖ　　　　/　　　　　　l　　ヽ
+　　　　　 j　　i　　　 ./　/　　/　　 .}　　ﾊ
+　　　　　 i　　{　　　/　ﾊ　 ｲ　　　/ .}　 ﾊ
+　　　　　/　　l　　 ｲ/jﾉ jハj　　 ｲl　ﾊ　　}   Whoah anon --- you have a ** Ryzen 9900XT MEGARIPPER ** ????
+　　　　 /　　 l／ l.斥示ｧ　l　 ／ ﾘjﾊｲ ﾊj   
+　　　　/ｲ ,　　l Y.ﾊ之ｿ　 j／斥ﾃｧ　ｲノ          I bet you can render like 50.000.000 React components per second ...
+　　　　　i/ i　, ﾊY)　　　　 丶ー'/イ ﾊj
+　　　　　　 l/V[X]个.､　` ‐　 イ Yﾉ 　　　　　　　　　　　_＿_
+　　　　／´⌒lｰiﾘｰ ､　｀r ≦ヾj(YﾉY　　　　　　　　　　/´:::::::::::｀ヽ
+　　 ／ 　　　　j::｀::K 7ヽ/ 」　 ヽr､] 　　　　　　　_＿ /::::::ヽ::::::::::::::::ヽ
+　　 l 　　　　　ｲ:::::::::l　　「 ム ゝノ:::ヽ　　　 ,.＜´:::::::::ヽ:::::::::::::::::::::::::::::::＼
+　　 弋 　＿　ｨ' l:::::::::ｰ-- ´Lヾヽ::::::::ヽ　 ./:::::::::::::::::::::::}:‐-､::::::::::::::::::::::::::::ヽ
+　　　　[　　_]　 i::::::::::::::::::::::::::::::::::::::::::::j　 /::::､:::::::::::::::::::i:::::::::ヽ::::::::::::::::::::::::::::::＼
+　　　　l ￣ .rl　 l::::::::::::::::::::::::::::::::::::::::::ﾉ　/::::::｀}::::ヽ::::::::::',:::::::::::::iヽ:::::::::::::::::::::::::::::::ヽ
+　　　　l-='´'l､　i:::::::::::::::::::::::::ノ::::::::::::::У:::::::::::i::::::::::::::::::::,:::::::::::::l　 ｀　 ､:::::::::::::::::::::::::＼
+　　　　ﾄ-=-'l:ﾊj:::::::::::::::::::::::::::::::::::::::::::/:::::::::::::::l:::::::::::::::::::::,:::::::::::::i　　　　`　 ､::::::::::::::::::::ヽ
+　　　　l‐--‐ｲ　ヽ:ヽ::::::::::::::::::::::::::::::::,::::::::::::::::::',::::::::::::::::::::,::::::::::::::!　　　　　　｀　､:::::::::::::::::＼
+　　　　i:::::::::::l　　　ヽヽ::::::::::::::::::::::::::i:::::::::::::::::::::,::::::::::::::::::::l:::::::::::ｲl〉　　　　　　　　`　､::::::::::::::ヽ
+　　　 ,'::::::::::::i　　　　ヽ:::::::::::::::,＜〃l::::::::::::::::::::::l::::::::::::::::::::l=＝':.:.:lヽ　　　　　　　　　 ｀ ､:::::::::::::＼
+　　　 {::::::::::::l　　　　　 ヾ弋彡:::::fﾊ:lゝ､_＿＿_ム::::::::::::::::::l:.:.:vvノlﾊヽ　　　　　　　　　　 ヽ:::::::::::::ヽ
+　　　 l:::::::::::,'　　　　　　　V::::::::j/::::::〉:.:.:.:.:.:.:.:.:.:.:.:.',::::::::::::::::l=-ﾋj　.ﾙl{'´　　　　　　　　　　　 ヽ:::､:::::::::ヽ
+　　　 l::::::::::/　　　　　　　 ヽj:::ハ:::ｲ` ､_＿＿_vvム::::::::::::::l　 ||　ﾉ ゞﾊ　　　　　　　　　　　　 .ヾ:､:::::::::::ヽ
+　　　l::::::::/　　　　　　　　　}::ヽ::r'´{　　　　　 ﾋj　 .',:::::::::::::l　.jjノ　　{:ﾉ　　　　　　　　　 　　　　　V::::::::::::::＼
+´｀ヽ.i:::::::/　　　　　　　　　 l::::::ゝヽ }　　　　　 ll　　 ',::::::::::::lイ´ ヾ　 〉}　　　　　　　　　　　　　　 ゝ､::::::::::::::::＼
+::::::r'{::::::/　　　　　　　　　　{::::＼:::} 〉　　　　　jj　　　}:::::::::::',ヾ　 ｀ ﾉ:::〉　　　　　　　　　　　　　　　　`ヽ:::::::::::::::ヽ
+`,:::::::::_/　　　　　　　　　　 廴:::::个〉ヽ､　　　ﾉ　　／ !::::::::::::ヽ　 〃:::/　　　　　　　　　　　　　　　　　　 ヽ:::::::::::::::
+</pre>
+</section>
+
+<p>But
+  well ... usually you still can notice it. Its those couple of hundreds of milliseconds to a few seconds that the page
+  is just blank and everything is "loading".
+</p>
+
+<p>Here is the thing: the browser that you use doesn't care for React components. It's just Javascript. All it wants is
+  an HTML file, where
+  there
+  is some Javascript, markdown, metadata and CSS defined.</p>
+<p>The History API that fundamentally enabled SPAs
+  works best
+  with well self-contained ... apps, not websites. </p>
+
+<h2>The birth of LA CREATURA (Vercel) - Server side rendering of SPA tech so you can have multi page applications</h2>
+<p>One area that SPAs traditionally and by design suck at is metadata. In the past, web crawlers like Google's crawler,
+  didn't fancy waiting for
+  a fat
+  React app with React router to load in 2.6 seconds. It always read
+  what it could from the <code>index.html</code> that was initially sent.
+</p>
+<p>The immediate effect on SPAs for this is that it can only provide one version of the <code>&lt;HEAD></code> element
+  with only one version of
+  metadata. That in turn means that all your pages have the same thumbnail, same description and same "look" when you
+  link them to your buddies or customers on the little widget that pops under your link. Hmm annoying right?</p>
+<p>Since then indexers have gotten a bit better for sure and afaik they now wait for the page load, but that's only
+  because the explosive growth of SPAs made them wait, not because that's how the Web was designed. This is where SSR
+  comes in.</p>
+<p>SSR or Server side rendering in React (or similar libs) as a tech has been around since mid 20-teens. Its premise is
+  to render
+  your framework on the server as much as you can and then serve that to the user so a lot of things can come
+  pre-rendered already and cut the time to the first render with the added benefit of custom metadata per page. A very
+  convoluted templating engine if you will.</p>
+<p>Tools like <code>Next.js</code> are for some time now the default way and are
+  even featured heavily in React documentation as the preferred method of using React. Apart from the abundance of
+  security
+  incidents plaguing Next.JS and the abysmal disregard for backwards compatibility, these "tools" or rather the Vercel
+  platform are also very happy to extract hundreds of dollars yearly to give you some basic analytics and a fancy
+  dashboard.
+  A mediocre solution to a terrible problem they created and keep dragging everyone else with them.</p>
+<p>Although Next offers a "static site generation", it is a secondary class citizen. It's meant to be hosted by them,
+  paid
+  by you monthly - that's the whole point.</p>
+<p>React server side rendered components are an evolutionary dead end. They speed up the development a bit due to
+  everyone knowing React,
+  the ecosystem is huge, but the tradeoff is horrible maintenance, constant fight with
+  the browser lifecycle and the culture of extraction that platforms like Vercel bring with them. </p>
+<p>Often when these
+  projects get to a modest to large site, waiting for recompile in a local dev environment can take a noticeable amount
+  of seconds (one such project i took over had a recompile time of 20-30 seconds) - just to see if that 4px margin makes
+  it
+  look better or not.</p>
+<p>SSR Javascript is just
+  <em>wrong</em> on
+  a fundamental level.
+</p>
+
+<h2>RETVRN - to HTML, to CSS, to simple serving</h2>
+<p>There was a real gap in both standards and capabilities of contemporary browsers 10-15 years ago. That gap is no
+  longer there.</p>
+<p>Im talking about the most basic functionality, like the shitty <code>&lt;select></code>, layouting that required
+  apprenticeship and years of practice (remember mason(ry).js lol?), CSS being basic and needing JS to fill in the role,
+  tedious element selection
+  forcing jQuery on everyone, etc. Well the good news is - all of these
+  issues have been mostly or completely solved by now.</p>
+<blockquote><i><u>You do not need a fat client anymore.</u> Let your browser be your fat client now.</i></blockquote>
+<p>And for the serving side: you will find it's MUCH cheaper to put static sites behind
+  something like <a href="https://bunny.net/" target="_blank" rel="nofollow noopener noreferrer"
+    title="Bunny CDN">BunnyCDN</a> or self-host your server. For even moderately visited websites its peanuts compared
+  to paying the Vercel tax.</p>
+<p>P.S.: For the agentic bunch out there in the $CURRENT_YEAR ... you WILL find out your LLM
+  can spit out perfectly fine HTML + CSS, with vanilla JS reactivity. Its gonna
+  steamroll your other React Slop project in terms of speed and UI responsiveness. Less was always more in that sense.
+  And what do you really care about
+  maintainability lol - you are an <em>agentic</em> coder, chin up, let the machine handle it.
+</p>
+<p>This website was not slopped out. I rather enjoyed writing it out. It is mostly around 10kB - 50kB in size. Or about
+  50x to 250x times smaller than the average website. If
+  you are interested in how it's made, i invite you to read further: <a
+    href="/articles/2026-08-10_Rendering_No_Bloat_In_10kB_With_Axum_And_Askama"
+    title="Rendering no bloat in 10kB with Axum and Askama">Rendering no bloat in 10kB with Axum and Askama.</a></p>

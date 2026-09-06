@@ -1,0 +1,8 @@
+<section class="articles container">
+  <ul>
+    {% for article in articles %}
+    <li><a href="/articles/{{article.slug}}"><span class="article-date">[{{ article.date_str }}]</span>
+        {{article.title}}</a></li>
+    {% endfor %}
+  </ul>
+</section>

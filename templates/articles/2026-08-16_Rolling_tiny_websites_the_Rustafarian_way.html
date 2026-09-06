@@ -1,0 +1,307 @@
+<p>Some time ago i saw the <a href="https://512kb.club/" title="512kb club homepage" target="_blank"
+    rel="nofollow noopener noreferrer">512kb club</a> and it stuck with me. You can squeeze a bunch of stuff into 512kB!
+  For the more austere there is even a <a href="https://1kb.club/" title="1kb club homepage" target="_blank"
+    rel="nofollow noopener noreferrer">1kb club</a>. But 1kb is hardmode, you get limited by the amount of text you
+  can
+  even squeeze into it.</p>
+<blockquote><i>1024 chars of UTF8 = 1kB ... so less than 1024 chars in total fit on the page, because some is
+    in the html tags,
+    metadata, maybe style and such.</i></blockquote>
+<p>This website is somewhere in between 1kB and 512kB, more on the side of 1 than 512. It makes me happy that i got the
+  homepage in the &lt;10kB range (not counting
+  the favicon), but for articles like this one, thats unfeasible as the text itself starts being a factor and having
+  <i>some</i> ASCII ART graphics already takes up several kilobytes.
+</p>
+<p>The backbones are Askama for templating and Axum for serving and I'll go into that below.</p>
+<p class="infobox">Feel free to snoop around the
+  complete codebase here: <a href="/repo" target="_blank" rel="nofollow noopener noreferrer"
+    title="mic0.dev repo">mic0.dev repo</a>.</p>
+<p>Things to consider for tiny websites:</p>
+<ul>
+  <li>Text content, markdown like HTML and CSS styles are usually <em>very cheap</em>.</li>
+  <li>Media is heavy. A single image, lets say 100kB can take as much space as 100.000 letters do on a screen. This is
+    why i opted to
+    go for <u>ASCII art</u>. It's a bit heavier than really good prepped SVGs, but with a lot more charm.<br />
+    <blockquote>Fellas like this one: 🫪 could also work. But thats another aesthetic in itself.</blockquote>
+  </li>
+  <li>Javascript can easily get into absurd sizes. A library like Miden SDK, which i worked with
+    recently, goes into several megabytes size wise. While you can certainly squeeze 20 client side routers and
+    frameworks into 512kB im of the opinion that <a
+      href="/articles/2026-08-10_Websites_were_never_meant_to_be_fat_server_side_rendered_react_apps"
+      title="Websites were never meant to be fat server side rendered react apps">Websites were never meant to be fat
+      server side rendered react apps</a>.</p>
+  </li>
+  <li>Minimize custom fonts. Fonts can easily go into tens, hundreds of thousands of kB. This website only loads a
+    single font: <code>aahub-light</code> and only on the article pages and it accounts for 45kB. Wish i could do
+    without ...
+    but ASCII graphics on articles would be all garbled up.</li>
+</ul>
+<hr />
+<p>People hate on doing HTML manually because it looks dorkish and old. I think there is some kind of generational
+  trauma attached to pure HTML+CSS. But browsers today offer very broad general support for everything. Gone are the
+  days where one would worry how this looks in an arbitrary browser ... It's all mostly chromium now anyway.</p>
+<p>To me HTML & CSS come easy.</p>
+<pre class="ascii-graphic aahub_light pos-relative">
+__,, --､　　,, -,=-　_,,_
+ﾆ=::::::::｀v'´::::::´￣.:::::.｀ヽ､
+:::::::::::::::::::::::::::::::::::::::::::::::::..r＼
+::::::::::::::::::::::::::::::::::::::::::::::::::::..＼
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::..l
+:::::::::::::::i|::::::::::::i::::::::|.l::::::::::::::::::|
+::::::::　 |i.|i::::i::/|!||/|| .|l:::::::::::::::|
+.ヽ:::::i|l|l.'⌒ヽ_l;|i.'⌒ヽl::::::|i|;:||
+ゝ,∨ﾉ ゝ.__ノ⌒ゝ.__ノ .!::::l jﾉ 
+::::( .（_　　　'　　　　　　）ﾉ          Behold!
+ヽ_'_::::ヽ:..　.i,　 ,i 　 ;-';:/
+    |:::::::|:.. /__竺_ヽ::|;:;l            I can ROTATE AND CENTER
+  /ﾍ:::::l;:. ヽ__,,,__ノ::l;;ﾘ
+/.:::::::ヽ::`ー'''''''''''ｰ':/            more than _200_ <code>&lt;div&gt;</code>s
+:::::::..　､ヽ;::::::.......:::;/
+::::::i::.　ﾐ　`ｰ--‐i''                         simultaneously in my *twisted mind*.
+ヽ､|::..　ミ,　 ..::ノ{-､
+. `＼::　 ヾ;;:::/::;|ﾄ､ .''iｰ::､_
+ヽ､. `＼　ヽ:|:::!ﾘ　 　し　 |`'r､
+　　　　 `'-==ﾃ'　　 　 　 |　j　ヽ.
+　　　　ヽ　　/ 　 　 　 　 |　　　 ＼
+　　　　　＼　　　　　　　/　　　 　 lヽ.
+　　　　　　　　　 　　　　　　 　　 ﾉ　 ＼ <div class="papadiv"></div>
+</pre>
+
+<h2>Wrangling HTML with Askama</h2>
+<p>Copy-pasting same HTML for each page and just changing the <code>&lt;body&gt;</code> content works and is lean but
+  its also a shortcut to to introduce inconsistencies is overall tedious.</p>
+<p><a href="https://askama.rs/en/stable/" title="Askama homepage" target="_blank"
+    rel="nofollow noopener noreferrer">Askama</a> is a simple yet powerful template engine. It powers things like <a
+    href="https://docs.rs/" title="docs.rs homepage" target="_blank" rel="nofollow noopener noreferrer">docs.rs</a>
+  which every Rust developer sooner or later lands on. It packs stuff into templates at compile time as much as
+  possible, with some leeway for dynamic content. Overall its
+  very fast on the recompilation part and the syntax is straightforward.</p>
+<p>Furthermore it will very happily <em>die on compilation</em> with a meaningful error message if your templates or
+  variables passed into them are incorrect / erroneous so you get all the good parts of Rust with it.</p>
+<p>For a little taste how it that might look like, this is how the template for the articles, aptly named
+  <code>_article.html</code> looks like:
+</p>
+<div class="codeblock" data-paint="html">
+{% extends "_layout.html" %}
+
+{%- block title -%}
+mic0.dev - {{ title }}
+{%- endblock -%}
+
+{%- block content -%}
+<style>
+    {%~include "_ascii.css"~%}
+    {%~include "_article.css"~%}
+</style>
+<section class="article container">
+  <h1>{{title}} &lt;/h1>
+  <p>by mic0, dated: {{ date_str }}&lt;/p>
+  <br />
+  {{ content | safe }}
+</section>
+<section class="article-sig container">
+  {% match signature_to_display %}
+  {% when 0 %}
+  {% include "ascii/01_article_sig.html" %}
+  {% when 1 %}
+  {% include "ascii/02_article_sig2.html" %}
+  {% else %}
+  {% include "ascii/01_article_sig.html" %}
+  {% endmatch %}
+</section>
+<section class="container">
+  <h2 class="breakline"><span>ATTRIBUTIONS</span></h2>
+  <p style="opacity: 0.7;">ASCII art used in the article and the above signature was sourced from <a
+      href="https://aahub.org" target="_blank" rel="nofollow noopener noreferrer" title="AAHUB homepage">AAHUB</a>.
+  </p>
+</section>
+{%- endblock -%}
+</div>
+<p>You can already observe a number of things here:</p>
+<ul>
+  <li> conditionals like <code>match</code> and <code>if / else</code> for setting different signatures at the bottom or
+    including the syntax highlighter</li>
+  <li>extending templates like <code>_layout.html</code> that generates the metadata & holds the page's HTML skeleton
+  </li>
+  <li>including other templates like CSS inserts</li>
+  <li>inserting dynamic content via <code>{{ content | safe }}</code>. (e.g. The content you are reading right now)</li>
+  <li>setting variables like the title of the page that other templates pick up</li>
+</ul>
+<p>Askama offers <a href="https://askama.rs/en/stable/template_syntax.html" title="Askama templating" target="_blank"
+    rel="nofollow noopener noreferrer">a lot more</a>, but you can take what you need and its more than enough. However
+  it doesn't serve content ... for that we need something
+  else.</p>
+
+<h2>Using Rust to make code blocks look all pretty</h2>
+<p>Its easy to throw a code snippet into a <code>&lt;pre></code> element, but you are left with a sad one-colored code.
+  It's hard to read and looks nothing like your riced IDE.</p>
+<p>In the traditional JS world, there are things like <code>Highlight.js</code> but its a chunky 80kb minified. There is
+  a much leaner version called <a target="_blank" rel="nofollow noopener noreferrer" title="Microlight homepage"
+    href="https://asvd.github.io/microlight/">Microlight</a> for code samples below is only 2.2kb in size - an
+  acceptable compromise. But why use JS at all if we can highlight with Rust :)</p>
+<p>I opted to use <a href="https://crates.io/crates/lol_html" title="lol_html codebase" target="_blank"
+    rel="nofollow noopener noreferrer">lol_html</a> used by Cloudflare for rewriting streamed HTML and a lib called <a
+    href="https://crates.io/crates/lol_html" title="syntect codebase" target="_blank"
+    rel="nofollow noopener noreferrer">syntect</a> used for actual coloring.</p>
+<p>I didn't find any quick solution inside Askama itself, so for anyone with a similar challenge my end solution looks like this:</p>
+<div class="codeblock" data-paint="rust">
+// Accepts an HTML String and Syntect settings/theme and replaces all contents
+// of any element found with a [data-paint] attribute
+fn highlight_code(html: Rc<String>, ss: Rc<SyntaxSet>, theme: Rc<Theme>) -> String {
+    rewrite_str( // from lol_html
+        &html.clone(),
+        RewriteStrSettings::new().append_element_content_handler(element!("div[data-paint]", {
+            move |el| {
+                let theme_clone = theme.clone();
+                let ss_clone = ss.clone();
+                let html_clone = html.clone();
+
+                // read the language denoted with data-paint attribute
+                // aka [data-paint="html"] for example
+                let paint_lang = el.get_attribute("data-paint")
+                    .unwrap_or("rust".to_string());
+
+                // get location of the content's start
+                let inner_start = el.source_location().bytes().end;
+
+                // nuke the innerHTML
+                el.set_inner_content("", ContentType::Html);
+
+                el.on_end_tag(end_tag!(move |end| {
+                    // get the content's end location
+                    let inner_end = end.source_location().bytes().start;
+
+                    // get the whole content from original string
+                    // now that we know where to snip it out
+                    let inner = &html_clone[inner_start..inner_end];
+
+                    // use syntect to color our codeblocks
+                    let syntax = ss_clone
+                        .find_syntax_by_token(&paint_lang)
+                        .unwrap_or_else(|| ss_clone.find_syntax_plain_text());
+                    let transformed = highlighted_html_for_string(
+                        inner,
+                        &ss_clone,
+                        syntax,
+                        &theme_clone
+                    ).expect("highlighting failed");
+
+                    // insert the highlighted codeblock back into the element,
+                    // completing the swap
+                    end.before(&transformed, ContentType::Html);
+                    Ok(())
+                }))?;
+                Ok(())
+            }
+        })),
+    )
+    .unwrap()
+}
+</div>
+
+<h2>Tying it up with Axum</h2>
+<p>Askama's job is to chew up the templates and their nested templates, digest it, fill in the interpolated 
+    variables and spit out a single <code>String</code>. All of it is then passed
+  into Axum's <code>Html()</code> and voila, our dish is served to the user.</p>
+<p>I like to use <a href="https://github.com/tokio-rs/axum" title="Axum homepage" target="_blank"
+    rel="nofollow noopener noreferrer">Axum</a> because it's really fast and it has never failed me. I've been running it
+  for years in production with zero issues. <a target="_blank" rel="nofollow noopener noreferrer"
+    title="docs.rs switching jinja template framework from tera to rinja"
+    href="https://blog.guillaume-gomez.fr/articles/2024-07-31+docs.rs+switching+jinja+template+framework+from+tera+to+rinja">Docs.rs
+    use it</a> as well to serve the huge library of crate docs and references.</p>
+<p>Route for the root of this website serving <code>index.html</code> looks like this:</p>
+<div class="codeblock" data-paint="rust">
+async fn index_handler() -> Result<impl IntoResponse, AppError> {
+    #[derive(Debug, Template)]
+    #[template(path = "index.html")]
+    struct Tmpl {
+        articles: Vec<ArticleMeta>,
+    }
+    let template = Tmpl {
+        articles: get_article_metas(),
+    };
+    Ok(Html(template.render()?))
+}
+</div>
+<p>Filling in the Askama template with variables is as simple as just constructing a struct with <code>Template</code> trait. Calling it's <code>render()</code> function gets you your packed HTML String which is then served by Axum.</p>
+<p>And that's it.</p>
+<p>For a quickstart of Askama + Axum I recommend you check out <a
+    href="https://github.com/askama-rs/askama/tree/main/examples/axum-app" title="the official Askama + Axum example"
+    target="_blank" rel="nofollow noopener noreferrer">the official Askama + Axum example</a>. God knows i borrowed
+  heavily when setting it up initially.</p>
+
+<style>
+  .papadiv {
+    position: absolute;
+    top: 5%;
+    right: 1em;
+    border: 3px double var(--white);
+    width: 240px;
+    height: 120px;
+  }
+
+  .papadiv>div {
+    position: absolute;
+    animation: 2s linear 0s infinite alternate running to-center;
+    transform-origin: center center;
+  }
+
+  .papadiv>div>div {
+    border-width: 1px;
+    border-style: dashed;
+    animation: 2s linear infinite running rotate-around;
+    transform-origin: center center;
+  }
+
+  @keyframes rotate-around {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes to-center {
+    20% {
+      transform: translate(120px, 60px);
+    }
+
+    100% {
+      transform: translate(120px, 60px);
+    }
+  }
+</style>
+
+<script>
+  let papadiv = document.querySelector(".papadiv");
+  let bibidivs = [];
+  for (let x = 0; x < 201; x++) {
+    let width = getRandomArbitrary(25, 50);
+    let height = getRandomArbitrary(10, 20);
+    let originX = -(width / 2);
+    let originY = -(height / 2);
+    let x = getRandomArbitrary(width, 240 - width);
+    let y = getRandomArbitrary(height, 120 - height);
+    let anim_delay = getRandomArbitrary(0, 1);
+    let div = document.createElement("div");
+    let inner_div = document.createElement("div");
+    inner_div.style = "width: " + width + "px; height: " + height + "px; border-color: " + generateRandomHexCode() + ";";
+    div.style = "transform: translate(" + x + "px," + y + "px); left: " + originX + "px; top: " + originY + "px; width: " + width + "px; height: " + height + "px; animation-delay: " + anim_delay + "s;";
+    div.append(inner_div);
+    papadiv.append(div)
+  }
+  function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+  function generateRandomHexCode() {
+    switch (parseInt(getRandomArbitrary(0, 4))) {
+      case 0:
+        return "var(--white)";
+      case 1:
+        return "var(--green)";
+      case 2:
+        return "var(--dark-green)";
+      case 3:
+        return "var(--purple)";
+
+    }
+  }
+</script>

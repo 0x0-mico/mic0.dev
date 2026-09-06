@@ -1,0 +1,52 @@
+.article h1 {
+  font-size: 2em;
+}
+
+.article h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--green);
+}
+
+.article h3 {
+  font-size: 1.2em;
+  border-bottom: 1px dashed var(--green);
+}
+
+.article code {
+  padding: .1em;
+  margin: .1em;
+  background: var(--black);
+  color: var(--green);
+  font-weight: bold;
+  font-style: italic;
+}
+
+.article-sig {
+  padding-top: 2em;
+}
+
+.codeblock {
+  position: relative;
+}
+
+.codeblock>pre {
+  overflow-x: auto;
+  padding: 0 1em 1em;
+  box-sizing: border-box;
+  border: 4px dotted var(--dark-green2);
+  white-space: pre-wrap;
+}
+
+.lang-name {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: var(--dark-green);
+  font-weight: bold;
+  opacity: 0.5;
+}
+
+.infobox {
+  background: var(--dark-green2);
+  padding: 1em;
+}

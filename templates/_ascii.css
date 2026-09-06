@@ -1,0 +1,14 @@
+@font-face {
+  font-family: "aahub_light";
+  src: url("/public/aahub_light.woff2") format("woff2"),
+    url("/public/aahub_light.woff") format("woff"),
+    url("/public/aahub_light.ttf") format("ttf");
+  font-display: swap;
+}
+
+.aahub_light {
+  font-family: "aahub_light";
+  white-space: pre;
+  font-size: 16px;
+  line-height: 18px;
+}

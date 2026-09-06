@@ -1,0 +1,254 @@
+<p>You might have noticed people bitching about GitHub being down <em>again</em>. It can't be
+  helped ... There are literal slop factories today gushing out slop 24/7 and furthermore it's operated by Microsoft
+  for
+  some time now.</p>
+<p class="infobox"><a href="https://radicle.dev" target="_blank" rel="nofollow noopener noreferrer"
+    title="Radicle homepage">Radicle</a> is an alternative to centralized forges. It offers 24/7 uptime(*) by its
+  decentralized
+  design. No more centralized control over your codebases. You retain all the control over who seeds your code and who
+  (or no one) you want to seed personally. Sharing is caring 🏴‍☠️</p>
+<small>* if people seed your stuff</small>
+<p>I think it's an interesting technology you SHOULD know about.</p>
+<p>TL;DR:</p>
+<ul>
+  <li><a href="#install">1. Setting up Radicle</a></li>
+  <li><a href="#repo">2. Repo setup</a></li>
+  <li><a href="#commiting">3. Syncing, commiting and pushing</a></li>
+  <li><a href="#issues">4. Opening & managing issues</a></li>
+  <li><a href="#pull-requests">5. Opening & managing pull requests</a></li>
+  <li><a href="#new-identity">extra - In case you need a new identity</a></li>
+</ul>
+
+<p>As with anything centralized your codebase is at the whims of centralised authorities. I personally don't think you
+  have anything to fear (yet) as any breach of trust (such as turning the forge political) by the big corps would result
+  in reputation damage, but that's
+  besides the point. Point is benevolent dictators grow old and often mean so it's good to have <em>a backup plan</em>.
+</p>
+<p>Vast majority (70%+ ?) of the public repos are hosted on GitHub. All other forges are dwarfed by the sheer
+  numbers of users and repos on GitHub.</p>
+<pre class="ascii-graphic font-size-reset">
+ _______________________________________
+/ I love Microsoft GitHub (C)(TM). They \
+| would never abuse my trust or profit  |
+\ off my work!                          /
+ ---------------------------------------
+        \   ^__^
+         \  (@@)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+</pre>
+<p>This is how we all look☝️, btw.</p>
+<p>Unsurprisingly even <code>cowsay</code> lives <a href="https://github.com/cowsay-org/cowsay" target="_blank"
+    rel="nofollow noopener noreferrer" title="Cowsay repo">on GitHub</a>.</p>
+<p>But it doesn't have to be this way ...</p>
+
+<h2>How does Radicle actually compare to GitHub</h2>
+<p>I like to think about Radicle like this:</p>
+<blockquote>Radicle is to GitHub what torrenting is to direct download.</blockquote>
+<ul>
+  <li>It cannot be <em>shut down</em> as long as peers exist</li>
+  <li>Repos are automatically replicated across all peers in the network (peers which are OK with your repo)</li>
+  <li>It features a built-in Tor support for your spiciest repos</li>
+  <li>It's fully open source and a collaborative effort</li>
+  <li>It offers public and private repos</li>
+  <li>You can open and collaborate on <i>issues</i>, they live inside git repos</li>
+  <li>Pull requests are done with patches using git commands, they are just git patches</li>
+  <li>Users are identified by their decentralized identity (DID) encoded from their ed25519 key</li>
+  <li>Repos are identified by a deterministically derived ID from their signed metadata.</li>
+</ul>
+<br />
+<pre class="ascii-graphic aahub_light">
+　　　　　　　　　　　　　　　　x≦三三≧x
+　　　　　　　　　　　　　　x≦圭圭圭圭圭ヽ
+　　　　　　　　　　　x≦圭圭圭圭奎圭圭圭`..､
+　　　　　　 　 　 ／圭圭圭圭＞‐ ＜圭圭圭圭:＼
+　　　 　 　 　 ／圭圭圭＞‘　 ＿＿　` ＜圭圭圭ヽ
+　　 　 　 　 /圭圭圭>　　 ,　': : : : : :`　､　 ` ＜圭圭.､
+　  　 　 　 /圭圭ﾘ>＞: :' :.ﾘ: : : ﾘ : :个::从`: :､　ヽ圭少､
+　　　　　 /圭／ ／: : :.ﾘ: :.l|: : : :ﾊ: ::ハ: :ﾊ: : :个:.､.＼ﾇ∧
+　  　 　 /ﾘ／ ／: : : : :ﾊ: :ﾊ: : :/　|: :|　|::|　＼:.|: : ＼ ＼ハ
+　　　　/／ ／: : : : : :/ ,|:.|=|: :.|　 |: :|=.|::|　　 |ﾉ: : : : ＼ 寸､                      
+　  　 .|/ ／: :|: : : : : :| ７.ﾉ .|: :.|　 |: :|　|::|　　　∨: : : : :|＼寸､
+　　　/イ: : : :|: : : : : :| .|:.|　.|: :.|　 | : |こV二 　　∨: : : :|: :.ヽ寸               Vro ...
+　　 〈/ |: : : :|: : : : : :|ィ|:.|芯|: :| 　ヽ/　不蒜不　 ∨: : :| : : :∨:|
+　　　∨|: : : :|: : : : : {ｲ |:|ﾟ__ﾉ|::|　　/　　tﾟ___刈　 /: : : :|:: ::::::∧|     Microsoft is *feeding* all your private (and public)
+  　 　 V: : : : |: : : : : | //　　|::|　　　 　 　 　 　 /:/: : : |:: ::::: ::ﾘ}          repos to the LLM.
+　　　　{: : : : :.|: : : :.∧/　 　 V　 　 　 　 　 　 /:/: : : /:::: :::::::::}
+  　 　  |:.ﾘ: : : |: : : ://　　　　　　ヽ　　　　　 ι': : : :/:::: ::::::::::}
+　 　 　 |: |ヽ: : ＼: : : X. 　 　 　 r‐､　　　　　 ｲ: : : /ﾉ::: ::::::::/         I can't imagine they don't,
+　　　　 |: |　∨: : ヽ: : : X　　 　 {⌒ >　 　 ／/: : ./∧ ::::::::/             but I don't have any proof, naturally.
+　  　 　 ヽ|　 ∨: : :`: : : : `　､ 　` ´　　 ／:::/: :／: :.∧::::/
+　　　　　　＼　∨: : : 小　::::::} ` ｰ-　 　 :::::/／: : : : :.∧/─ ､           Uhmm ... 
+　  　 　 　 　 　 〉:ヽ: : : :ヽ:::::}　　　　　　 ／ |: : : : : :::／圭圭 ､     Do you really trust the one big fat monopoly
+ 　  　 　 　 x≦圭|: :＼: : :.ヽ|　　 　 　 　 　 |: : : : : : }圭圭圭劣､     in this space and its owned by Microsoft?
+　　 　 　 /圭圭圭|: :|::::､: : : |―､　　ｨ´￣￣|: : : : : :.|圭圭圭圭少.､   
+　  　 　 /圭圭圭ﾇ|: :|:::::}: : 人＿＿＿＿＿ﾉ: : : : : /圭圭圭圭圭利
+　　　　/圭圭圭圭|: :| >: : : : :|::::::::::::::::::::::::/: : : : : /圭:圭:圭:圭:圭到        I don't ... and neither do
+ 　 　 /圭圭圭圭/: //: : :.∧/:::::::::::::::::::／４: : : :./圭圭圭圭圭圭圭|     do millions of business and individuals who
+   　 /圭圭圭圭/:ノ/: : :ノ圭|::::::::::::::::::::::::::::|: : ／圭圭圭圭圭圭圭風     self-host their repos or publish on Radicle.
+　　/コ:圭:圭:圭´圭|: :/圭圭|::::::::::::::::::::::::::::|: /:圭:圭圭圭圭圭圭圭弐
+   /圭圭圭圭圭圭/:ノ:圭:圭:|::::::::::::::::::::::::::::|/圭圭圭圭圭/圭圭圭/弐
+</pre>
+<h2>Complete flow</h2>
+<p>Think what you usually do with git and GitHub; init a repo, do some commits, push your
+  code to the remote, open an issue / PR, close them, merge them. For me that covers 95% of stuff i do. "Complete flow"
+  of course is an oversimplification,
+  there is much more, but this will get you started. To go into more detail do check out <a
+    href="https://radicle.dev/guides/user" target="_blank" rel="nofollow noopener noreferrer"
+    title="Radicle user guide">Radicle User guide</a> and <a href="https://radicle.dev/guides/protocol" target="_blank"
+    rel="nofollow noopener noreferrer" title="Radicle user guide">Radicle Protocol guide</a>.
+</p>
+
+<h3 id="install">1. Setting up Radicle</h3>
+<p>Go to <a href="https://radicle.dev/#get-started" target="_blank" rel="nofollow noopener noreferrer"
+    title="Radicle get started">Get started</a> section of Radicle and install it on your system.
+</p>
+<p>At the time of the writing its as simple as running:</p>
+<div class="codeblock" data-paint="sh">
+  curl -sSLf https://radicle.dev/install | sh</div>
+<p>If you
+  prefer not to run scripts from the web you can just get it from the <a
+    href="https://radicle.network/nodes/seed.radicle.dev/rad%3Az3gqcJUoA1n9HaHKufZs5FCSGazv5" target="_blank"
+    rel="nofollow noopener noreferrer" title="Radicle repo">source</a>.</p>
+<p>After that, you will need to create your identity. You do that by running:</p>
+<div class="codeblock" data-paint="sh">
+  rad auth</div>
+<p>Make sure the password is something you will remember, you WILL be prompted to input it at certain
+  times like when starting the local node.</p>
+<p>To get info on your identity like your DID and other details just run:</p>
+<div class="codeblock" data-paint="sh">
+  rad self</div>
+<p class="infobox">
+  There is also a
+  <a href="https://radicle.network/desktop" target="_blank" rel="nofollow noopener noreferrer"
+    title="Dektop client for Radicle">Radicle Desktop</a> fully featured graphical client. It gives you a bunch of stuff
+  you might expect like file explorer, diff viewer, listing issues etc.
+</p>
+
+<h3 id="repo">2. Repo setup</h3>
+<p>Pick any repo - new or old it doesn't matter as long as it is an initiated <code>git</code> repo. If it's not yet,
+  then
+  run:</p>
+<div class="codeblock" data-paint="sh">
+  git init</div>
+<p>To then initiate it as a Radicle repo, run:</p>
+<div class="codeblock" data-paint="sh">
+  rad init</div>
+<p>After confirming the details, you will be given some info and a string such as
+  <code>rad:z43dViVwFh1XTPx9E7MAmyEjx8KR6</code>, this
+  is the ID of your Radicle repo.
+</p>
+<h3 id="commiting">3. Syncing, commiting and pushing</h3>
+<p>You initialized your repo but it's nowhere to be found on the net ... because we havent pushed anything yet. Make an
+  empty commit or something and then lets push it to the remote.</p>
+<div class="codeblock" data-paint="sh">
+  # ...
+  git commit --allow-empty -m "init"</div>
+<p>For this illustration it does not really matter whats in the commit, it can be empty.</p>
+<p>For that you will need to run a local Radicle node. Radicle is offline-first (git actions, creating repos, etc. can
+  all be done offline), but for stuff like pushing commits to the Radicle network, you will need to run a local node.
+  Simply run:</p>
+<div class="codeblock" data-paint="sh">
+  rad node start</div>
+<div class="infobox">
+  <p>
+    At the time of writing, the two default preferred seeds (rosa.radicle.network and iris.radicle.network) have issues
+    with
+    connections <a
+      href="https://radicle.zulipchat.com/#narrow/channel/369873-Support/topic/default.20seeds.20just.20not.20working/with/620674906"
+      target="_blank" rel="nofollow noopener noreferrer" title="Zulip thread about the issues">due to the surge of
+      people</a> taking interest in Radicle. If you need to find additional seeds check the <a
+      href="https://radicle.zulipchat.com/#narrow/channel/384534-Seeds" target="_blank"
+      rel="nofollow noopener noreferrer" title="Radicle zulip">seeds list on Radicle's Zulip chat</a>. To add seeds to
+    you node simply find the seed and add it as such:
+  </p>
+  <div class="codeblock" data-paint="sh">
+    rad node connect
+    z6MkuyPDChcwCruKGd2tw54FZo2HemY135JvTLzbVTvoWKJR@index.radicle.garden:8776</div>
+  <p>
+    This will connect your local node to another node and your repo will propagate.
+  </p>
+</div>
+<p>You can now simply push via:</p>
+<div class="codeblock" data-paint="sh">
+  git push
+
+  # or if you have multiple git remotes
+  git push rad main
+</div>
+<p> and it will push your stuff on the Radicle
+  network.</p>
+<p>If you inspect your remotes you will see something like:</p>
+<div class="codeblock" data-paint="sh">
+  $ git remote -v
+  rad rad://z49w1NV6sraK7D4878VJq4iNXWeTD (fetch)
+  rad rad://z49w1NV6sraK7D4878VJq4iNXWeTD/z6MkqoMEQuzmqbykE7pWpK26asi8h... (push)
+  # the thing after slash is your node id
+</div>
+<h3 id="issues">4. Opening & managing issues</h3>
+<p>Radicle is a decentralized protocol. There is no single server like GitHub where your issues or pull requests live
+  and die. It uses something called COBs (collaborative objects) that live in the repo itself.</p>
+<p>To open a new issue, simple do:</p>
+<div class="codeblock" data-paint="sh">
+  rad issue</div>
+<p>It will prompt you to add title and description. If you want a one-liner you can do:</p>
+<div class="codeblock" data-paint="sh">
+  rad issue open --title "Issue Title" --description "Issue Description"</div>
+<p>Bam, if you have local node set up it will automagically sync your issue to the seeds.</p>
+<p>Likewise, to close it, assign it to someone, do:</p>
+<div class="codeblock" data-paint="sh">
+  # mark an issue as solved
+  rad issue state $ISSUE_ID --solved
+  # mark an issue as closed
+  rad issue state $ISSUE_ID --closed
+  # add a new assignee to the issue
+  rad issue assign $ISSUE_ID -a did:key:$USER_DID
+  # use `--help` to see a bunch of other options available
+  rad issue --help</div>
+<h3 id="pull-requests">5. Opening and managing Pull requests</h3>
+<p>There are no "pull requests" on Radicle. There are patches. To open a new patch to the repo: branch off, make a
+  commit and make a patch
+  via:</p>
+<div class="codeblock" data-paint="sh">
+  git push rad HEAD:refs/patches
+  # doesn't need to be HEAD specifically, it can be whichever branch
+</div>
+<p>To list all patches, run:</p>
+<div class="codeblock" data-paint="sh">
+  rad patch list
+  # or for specific patch
+  rad patch show 0309b33
+</div>
+<p>
+  To merge a patch back, just check its commit, merge / rebase to your branch and push. Simple. Radicle will take care
+  of propagating the change to the seeds.
+</p>
+<h3 id="new-identity">In case you need a new identity</h3>
+<p>If you ever need a new Radicle identity, there is currently no easy command to do that. But its simple by design so
+  in that case you need to:</p>
+<div class="codeblock" data-paint="sh">
+  # delete the following things (relevant keys, config and node storage)
+  rm ~/.radicle/keys/radicle.pub
+  rm ~/.radicle/keys/radicle
+  rm ~/.radicle/config.json
+  rm -rf ~/.radicle/storage
+
+  # create new identity
+  rad auth
+  # if you want to reinit the repo with Radicle
+  git remote rm rad
+  rad init
+</div>
+
+<p>And that covers about everything you probably do in your day to day code forging.</p>
+
+<h2>Closing thoughts</h2>
+<p>Is this the new meta? Maybe, but probably not just yet. Radicle feels very much experimental still. I can see the use
+  cases, but i can also see
+  there is much to be done to attract any mainstream audience (and it might not come from Radicle itself either, hint).
+</p>
+<p>
+  People on Zulip where Radicle community lives were more than happy to quickly answer all questions I had.
+  I think its cool to have a decentralized alternative, because there will come a time when
+  enshittification gets to big centralized forges.</p>
