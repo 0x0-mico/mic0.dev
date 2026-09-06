@@ -27,7 +27,8 @@ mic0.dev - {{ title }}
       {% include "ascii/03_article_sig3.html" %}
     {% else %}
       {% include "ascii/01_article_sig.html" %}
-  {% endmatch %}  
+  {% endmatch %}
+  <p class="infobox">Read next: <a href="{{next_article_slug}}" title="{{next_article_title}}">{{ next_article_title }}</a></p>
 </section>
 <section class="container">
   <h2 class="breakline"><span>ATTRIBUTIONS</span></h2>

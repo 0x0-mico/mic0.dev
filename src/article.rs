@@ -8,7 +8,7 @@ use syntect::{
     parsing::SyntaxSet,
 };
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq, PartialOrd, Default)]
 pub(crate) struct ArticleMeta {
     pub date: NaiveDate,
     pub date_str: String,
@@ -17,6 +17,8 @@ pub(crate) struct ArticleMeta {
     pub filename: String,
     pub content: String,
     pub signature_to_display: u8,
+    pub next_article_title: String,
+    pub next_article_slug: String,
 }
 
 impl ArticleMeta {
@@ -26,6 +28,8 @@ impl ArticleMeta {
         filename: String,
         content: String,
         signature_to_display: u8,
+        next_article_title: String,
+        next_article_slug: String,
     ) -> Self {
         let date_str = date.format("%Y-%m-%d").to_string();
         let slug = filename[..filename.len() - 5].to_string();
@@ -37,6 +41,8 @@ impl ArticleMeta {
             filename,
             content,
             signature_to_display,
+            next_article_title,
+            next_article_slug,
         }
     }
 }
@@ -76,18 +82,27 @@ pub fn get_article_metas() -> Vec<ArticleMeta> {
                             title.to_string(),
                             slug.to_string(),
                             highlighted_content,
-                            0, // signature_to_display
+                            0,              // signature_to_display
+                            "".to_string(), // next_article_title
+                            "".to_string(), // next_article_slug
                         );
                         metas.push(article_meta);
                     }
                 }
                 metas.sort_by_key(|a| a.date);
                 metas.reverse();
+                let default_article_meta = ArticleMeta::default();
+                let first_meta = metas.last().unwrap_or(&default_article_meta);
+                let (mut next_article_title, mut next_article_slug) =
+                    (first_meta.title.clone(), first_meta.slug.clone());
                 for (index, article_meta) in metas.iter_mut().enumerate() {
-                    // assign which signature to display after they've been sorted by date
-                    // so they persist after adding a new article
                     let signature_to_display = index as u8 % NUM_SIGNATURES;
                     article_meta.signature_to_display = signature_to_display;
+                    article_meta.next_article_title = next_article_title;
+                    article_meta.next_article_slug = next_article_slug;
+                    next_article_title = article_meta.title.clone();
+                    next_article_slug = article_meta.slug.clone();
+                    println!("{:?}", next_article_title);
                 }
                 metas
             } else {

@@ -94,12 +94,16 @@ async fn article_handler(Path(slug): Path<String>) -> Result<impl IntoResponse, 
         content: String,
         date_str: String,
         signature_to_display: u8,
+        next_article_slug: String,
+        next_article_title: String 
     }
     let template = Tmpl {
         title: article.title.clone(),
         content: article.content.clone(),
         date_str: article.date_str.clone(),
         signature_to_display: article.signature_to_display,
+        next_article_slug: article.next_article_slug.clone(),
+        next_article_title: article.next_article_title.clone()
     };
     Ok(Html(template.render()?))
 }
