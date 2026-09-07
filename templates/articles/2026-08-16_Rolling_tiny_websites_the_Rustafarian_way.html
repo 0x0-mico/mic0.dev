@@ -39,7 +39,7 @@
 <hr />
 <p>People hate on doing HTML manually because it looks dorkish and old. I think there is some kind of generational
   trauma attached to pure HTML+CSS. But browsers today offer very broad general support for everything. Gone are the
-  days where one would worry how this looks in an arbitrary browser ... It's all mostly chromium now anyway.</p>
+  days where one would worry how this looks in an arbitrary browser ... </p>
 <p>To me HTML & CSS come easy.</p>
 <pre class="ascii-graphic aahub_light pos-relative" aria-hidden="true">
 __,, --､　　,, -,=-　_,,_
@@ -69,7 +69,7 @@ __,, --､　　,, -,=-　_,,_
 
 <h2>Wrangling HTML with Askama</h2>
 <p>Copy-pasting same HTML for each page and just changing the <code>&lt;body&gt;</code> content works and is lean but
-  its also a shortcut to to introduce inconsistencies is overall tedious.</p>
+  its also a shortcut to introduce inconsistencies is overall tedious.</p>
 <p><a href="https://askama.rs/en/stable/" title="Askama homepage" target="_blank"
     rel="nofollow noopener noreferrer">Askama</a> is a simple yet powerful template engine. It powers things like <a
     href="https://docs.rs/" title="docs.rs homepage" target="_blank" rel="nofollow noopener noreferrer">docs.rs</a>
@@ -78,7 +78,7 @@ __,, --､　　,, -,=-　_,,_
   very fast on the recompilation part and the syntax is straightforward.</p>
 <p>Furthermore it will very happily <em>die on compilation</em> with a meaningful error message if your templates or
   variables passed into them are incorrect / erroneous so you get all the good parts of Rust with it.</p>
-<p>For a little taste how it that might look like, this is how the template for the articles, aptly named
+<p>For a little taste how that might look like, this is how the template for the articles, aptly named
   <code>_article.html</code> looks like:
 </p>
 <div class="codeblock" data-paint="html">
@@ -198,6 +198,7 @@ fn highlight_code(html: Rc<String>, ss: Rc<SyntaxSet>, theme: Rc<Theme>) -> Stri
     .unwrap()
 }
 </div>
+<p>I do this on program startup so its cheap and fast.</p>
 
 <h2>Tying it up with Axum</h2>
 <p>Askama's job is to chew up the templates and their nested templates, digest it, fill in the interpolated 
