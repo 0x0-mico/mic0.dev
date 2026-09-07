@@ -24,8 +24,9 @@ impl IntoResponse for AppError {
         #[template(path = "error.html")]
         struct Tmpl {
             err: AppError,
-                    page_title: String,
-        page_description: String,
+            page_title: String,
+            page_description: String,
+            uri: String,
         }
         let status = match &self {
             AppError::NotFound => StatusCode::NOT_FOUND,
@@ -34,8 +35,9 @@ impl IntoResponse for AppError {
         let tmpl = Tmpl {
             page_title: "mic0.dev - Error".to_string(),
             page_description: status.to_string(),
-            err: self
-         };
+            err: self,
+            uri: "error".to_string(),
+        };
         if let Ok(body) = tmpl.render() {
             (status, Html(body)).into_response()
         } else {
@@ -60,12 +62,14 @@ async fn index_handler() -> Result<impl IntoResponse, AppError> {
     struct Tmpl {
         page_title: String,
         page_description: String,
+        uri: String,
         articles: Vec<ArticleMeta>,
     }
     let template = Tmpl {
         page_title: "mic0.dev".to_string(),
         page_description: "Hey, im mic0! Welcome to my home page.".to_string(),
         articles: get_article_metas(),
+        uri: "".to_string(),
     };
     Ok(Html(template.render()?))
 }
@@ -76,10 +80,12 @@ async fn cv_handler() -> Result<impl IntoResponse, AppError> {
     struct Tmpl {
         page_title: String,
         page_description: String,
+        uri: String,
     }
     let template = Tmpl {
         page_title: "mic0.dev - CV".to_string(),
         page_description: "CV of mic0".to_string(),
+        uri: "cv".to_string(),
     };
     Ok(Html(template.render()?))
 }
@@ -91,11 +97,13 @@ async fn articles_handler() -> Result<impl IntoResponse, AppError> {
         page_title: String,
         page_description: String,
         articles: Vec<ArticleMeta>,
+        uri: String,
     }
     let template = Tmpl {
         page_title: "mic0.dev - Articles".to_string(),
         page_description: "Articles by mic0".to_string(),
         articles: get_article_metas(),
+        uri: "articles".to_string(),
     };
     Ok(Html(template.render()?))
 }
@@ -118,6 +126,7 @@ async fn article_handler(Path(slug): Path<String>) -> Result<impl IntoResponse, 
         signature_to_display: u8,
         next_article_slug: String,
         next_article_title: String,
+        uri: String,
     }
     let template = Tmpl {
         page_title: article.title.clone(),
@@ -128,6 +137,7 @@ async fn article_handler(Path(slug): Path<String>) -> Result<impl IntoResponse, 
         signature_to_display: article.signature_to_display,
         next_article_slug: article.next_article_slug.clone(),
         next_article_title: article.next_article_title.clone(),
+        uri: article.slug.clone(),
     };
     Ok(Html(template.render()?))
 }
