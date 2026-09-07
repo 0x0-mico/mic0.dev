@@ -67,7 +67,7 @@ async fn index_handler() -> Result<impl IntoResponse, AppError> {
     }
     let template = Tmpl {
         page_title: "mic0.dev".to_string(),
-        page_description: "Hey, im mic0! Welcome to my home page.".to_string(),
+        page_description: "My homepage and articles on the things im interested in".to_string(),
         articles: get_article_metas(),
         uri: "".to_string(),
     };
