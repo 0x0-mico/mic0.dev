@@ -167,6 +167,7 @@ li:before {
   text-align: center;
   border: 0;
   color: var(--dark-grey);
+  overflow-x: hidden;
 }
 
 .breakline span {
@@ -186,4 +187,28 @@ li:before {
 
 .pos-relative {
   position: relative;
+}
+
+@media all and (max-width: 768px) {
+  .header {
+    grid-template-columns: 1fr;
+  }
+
+  .header-info>br:not(:first-of-type):not(:last-of-type) {
+    display: none;
+  }
+
+  .header .ascii-graphic {
+    text-align: center;
+  }
+
+  :not(.header) .ascii-graphic {
+    overflow-x: scroll;
+  }
+}
+
+@media all and (max-width: 450px) {
+  .ascii-graphic {
+    font-size: .4em;
+  }
 }

@@ -57,7 +57,11 @@ pub fn get_article_metas() -> Vec<ArticleMeta> {
             let theme_path: PathBuf = [env!("CARGO_MANIFEST_DIR"), "src/themes/codeblock_theme.md"]
                 .iter()
                 .collect();
-            let highlighting_theme = Rc::new(ThemeSet::get_theme(theme_path).unwrap().clone());
+            let highlighting_theme = Rc::new(
+                ThemeSet::get_theme(theme_path)
+                    .expect("Theme path exists")
+                    .clone(),
+            );
             let path: PathBuf = [env!("CARGO_MANIFEST_DIR"), "templates/articles"]
                 .iter()
                 .collect();
@@ -102,7 +106,6 @@ pub fn get_article_metas() -> Vec<ArticleMeta> {
                     article_meta.next_article_slug = next_article_slug;
                     next_article_title = article_meta.title.clone();
                     next_article_slug = article_meta.slug.clone();
-                    println!("{:?}", next_article_title);
                 }
                 metas
             } else {
