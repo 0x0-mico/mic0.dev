@@ -1,13 +1,15 @@
 mod article;
 mod router;
 
+use std::sync::LazyLock;
+
 use router::create_router;
 
-use crate::article::get_article_metas;
+use crate::article::ARTICLES;
 
 #[tokio::main]
 async fn main() {
-    get_article_metas(); // call it once so it doesn't die at runtime but at startup
+    LazyLock::force(&ARTICLES); // force it here so it dies on startup if wrong
     let app = create_router();
     let listener = tokio::net::TcpListener::bind("0.0.0.0:4000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
