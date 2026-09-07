@@ -63,7 +63,7 @@ async fn index_handler() -> Result<impl IntoResponse, AppError> {
         page_title: String,
         page_description: String,
         uri: String,
-        articles: Vec<ArticleMeta>,
+        articles: &'static [ArticleMeta],
     }
     let template = Tmpl {
         page_title: "mic0.dev".to_string(),
@@ -96,7 +96,7 @@ async fn articles_handler() -> Result<impl IntoResponse, AppError> {
     struct Tmpl {
         page_title: String,
         page_description: String,
-        articles: Vec<ArticleMeta>,
+        articles: &'static [ArticleMeta],
         uri: String,
     }
     let template = Tmpl {
@@ -118,25 +118,25 @@ async fn article_handler(Path(slug): Path<String>) -> Result<impl IntoResponse, 
     #[derive(Debug, Template)]
     #[template(path = "_article.html")]
     struct Tmpl {
-        page_title: String,
+        page_title: &'static str,
         page_description: String,
-        title: String,
-        content: String,
-        date_str: String,
+        title: &'static str,
+        content: &'static str,
+        date_str: &'static str,
         signature_to_display: u8,
-        next_article_slug: String,
-        next_article_title: String,
+        next_article_slug: &'static str,
+        next_article_title: &'static str,
         uri: String,
     }
     let template = Tmpl {
-        page_title: article.title.clone(),
+        page_title: &article.title,
         page_description: format!("written by mic0 on {}", article.date_str),
-        title: article.title.clone(),
-        content: article.content.clone(),
-        date_str: article.date_str.clone(),
+        title: &article.title,
+        content: &article.content,
+        date_str: &article.date_str,
         signature_to_display: article.signature_to_display,
-        next_article_slug: article.next_article_slug.clone(),
-        next_article_title: article.next_article_title.clone(),
+        next_article_slug: &article.next_article_slug,
+        next_article_title: &article.next_article_title,
         uri: format!("articles/{}", article.slug.clone()),
     };
     Ok(Html(template.render()?))

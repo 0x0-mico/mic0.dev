@@ -31,7 +31,7 @@
       title="Websites were never meant to be fat server side rendered react apps">Websites were never meant to be fat
       server side rendered react apps</a>.</p>
   </li>
-  <li>Minimize custom fonts. Fonts can easily go into tens, hundreds of thousands of kB. This website only loads a
+  <li>Minimize custom fonts. Fonts can easily go into tens or hundreds of kB. This website only loads a
     single font: <code>aahub-light</code> and only on the article pages and it accounts for 45kB. Wish i could do
     without ...
     but ASCII graphics on articles would be all garbled up.</li>
@@ -216,7 +216,7 @@ async fn index_handler() -> Result<impl IntoResponse, AppError> {
     #[derive(Debug, Template)]
     #[template(path = "index.html")]
     struct Tmpl {
-        articles: Vec<ArticleMeta>,
+        articles: &'static [ArticleMeta],
     }
     let template = Tmpl {
         articles: get_article_metas(),

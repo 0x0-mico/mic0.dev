@@ -50,69 +50,67 @@ impl ArticleMeta {
 pub static ARTICLES: OnceLock<Vec<ArticleMeta>> = OnceLock::new();
 pub const NUM_SIGNATURES: u8 = 3;
 
-pub fn get_article_metas() -> Vec<ArticleMeta> {
-    ARTICLES
-        .get_or_init(|| {
-            let syntax_set = Rc::new(SyntaxSet::load_defaults_newlines());
-            let theme_path: PathBuf = [env!("CARGO_MANIFEST_DIR"), "src/themes/codeblock_theme.md"]
-                .iter()
-                .collect();
-            let highlighting_theme = Rc::new(
-                ThemeSet::get_theme(theme_path)
-                    .expect("Theme path exists")
-                    .clone(),
-            );
-            let path: PathBuf = [env!("CARGO_MANIFEST_DIR"), "templates/articles"]
-                .iter()
-                .collect();
-            if let Ok(articles) = std::fs::read_dir(path) {
-                let mut metas = Vec::new();
-                for article in articles {
-                    if let Ok(path) = article
-                        && let Ok(filename) = path.file_name().into_string()
-                        && let Ok(content) = std::fs::read_to_string(path.path())
-                    {
-                        let date = NaiveDate::parse_from_str(&filename[0..10], "%Y-%m-%d")
-                            .unwrap_or_default();
-                        let slug = &filename;
-                        let title = &filename[11..filename.len() - 5].replace("_", " ");
-                        let highlighted_content = highlight_codeblocks(
-                            Rc::new(content),
-                            syntax_set.clone(),
-                            highlighting_theme.clone(),
-                        );
-                        let article_meta = ArticleMeta::new(
-                            date,
-                            title.to_string(),
-                            slug.to_string(),
-                            highlighted_content,
-                            0,              // signature_to_display
-                            "".to_string(), // next_article_title
-                            "".to_string(), // next_article_slug
-                        );
-                        metas.push(article_meta);
-                    }
+pub fn get_article_metas() -> &'static [ArticleMeta] {
+    ARTICLES.get_or_init(|| {
+        let syntax_set = Rc::new(SyntaxSet::load_defaults_newlines());
+        let theme_path: PathBuf = [env!("CARGO_MANIFEST_DIR"), "src/themes/codeblock_theme.md"]
+            .iter()
+            .collect();
+        let highlighting_theme = Rc::new(
+            ThemeSet::get_theme(theme_path)
+                .expect("Theme path exists")
+                .clone(),
+        );
+        let path: PathBuf = [env!("CARGO_MANIFEST_DIR"), "templates/articles"]
+            .iter()
+            .collect();
+        if let Ok(articles) = std::fs::read_dir(path) {
+            let mut metas = Vec::new();
+            for article in articles {
+                if let Ok(path) = article
+                    && let Ok(filename) = path.file_name().into_string()
+                    && let Ok(content) = std::fs::read_to_string(path.path())
+                {
+                    let date =
+                        NaiveDate::parse_from_str(&filename[0..10], "%Y-%m-%d").unwrap_or_default();
+                    let slug = &filename;
+                    let title = &filename[11..filename.len() - 5].replace("_", " ");
+                    let highlighted_content = highlight_codeblocks(
+                        Rc::new(content),
+                        syntax_set.clone(),
+                        highlighting_theme.clone(),
+                    );
+                    let article_meta = ArticleMeta::new(
+                        date,
+                        title.to_string(),
+                        slug.to_string(),
+                        highlighted_content,
+                        0,              // signature_to_display
+                        "".to_string(), // next_article_title
+                        "".to_string(), // next_article_slug
+                    );
+                    metas.push(article_meta);
                 }
-                metas.sort_by_key(|a| a.date);
-                metas.reverse();
-                let default_article_meta = ArticleMeta::default();
-                let first_meta = metas.last().unwrap_or(&default_article_meta);
-                let (mut next_article_title, mut next_article_slug) =
-                    (first_meta.title.clone(), first_meta.slug.clone());
-                for (index, article_meta) in metas.iter_mut().enumerate() {
-                    let signature_to_display = index as u8 % NUM_SIGNATURES;
-                    article_meta.signature_to_display = signature_to_display;
-                    article_meta.next_article_title = next_article_title;
-                    article_meta.next_article_slug = next_article_slug;
-                    next_article_title = article_meta.title.clone();
-                    next_article_slug = article_meta.slug.clone();
-                }
-                metas
-            } else {
-                vec![]
             }
-        })
-        .clone()
+            metas.sort_by_key(|a| a.date);
+            metas.reverse();
+            let default_article_meta = ArticleMeta::default();
+            let first_meta = metas.last().unwrap_or(&default_article_meta);
+            let (mut next_article_title, mut next_article_slug) =
+                (first_meta.title.clone(), first_meta.slug.clone());
+            for (index, article_meta) in metas.iter_mut().enumerate() {
+                let signature_to_display = index as u8 % NUM_SIGNATURES;
+                article_meta.signature_to_display = signature_to_display;
+                article_meta.next_article_title = next_article_title;
+                article_meta.next_article_slug = next_article_slug;
+                next_article_title = article_meta.title.clone();
+                next_article_slug = article_meta.slug.clone();
+            }
+            metas
+        } else {
+            vec![]
+        }
+    })
 }
 
 fn highlight_codeblocks(html: Rc<String>, ss: Rc<SyntaxSet>, theme: Rc<Theme>) -> String {
