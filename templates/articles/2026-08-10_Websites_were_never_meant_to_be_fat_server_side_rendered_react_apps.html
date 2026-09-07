@@ -115,16 +115,15 @@
 <p>Although Next offers a "static site generation", it is a secondary class citizen. It's meant to be hosted by them,
   paid
   by you monthly - that's the whole point.</p>
-<p>React server side rendered components are an evolutionary dead end. They speed up the development a bit due to
-  everyone knowing React,
-  the ecosystem is huge, but the tradeoff is horrible maintenance, constant fight with
+<p>React server side rendered components with hydration are an evolutionary dead end. They speed up the development a bit due to
+  everyone knowing React and Next.JS being pushed as the default. That makes the ecosystem huge, but the tradeoff is horrible maintenance, constant fight with
   the browser lifecycle and the culture of extraction that platforms like Vercel bring with them. </p>
 <p>Often when these
   projects get to a modest to large site, waiting for recompile in a local dev environment can take a noticeable amount
   of seconds (one such project i took over had a recompile time of 20-30 seconds) - just to see if that 4px margin makes
   it
   look better or not.</p>
-<p>SSR Javascript is just
+<p>SSR Javascript + hydration is just
   <em>wrong</em> on
   a fundamental level.
 </p>
