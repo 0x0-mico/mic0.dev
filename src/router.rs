@@ -137,7 +137,7 @@ async fn article_handler(Path(slug): Path<String>) -> Result<impl IntoResponse, 
         signature_to_display: article.signature_to_display,
         next_article_slug: article.next_article_slug.clone(),
         next_article_title: article.next_article_title.clone(),
-        uri: article.slug.clone(),
+        uri: format!("articles/{}", article.slug.clone()),
     };
     Ok(Html(template.render()?))
 }
