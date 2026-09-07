@@ -24,12 +24,18 @@ impl IntoResponse for AppError {
         #[template(path = "error.html")]
         struct Tmpl {
             err: AppError,
+                    page_title: String,
+        page_description: String,
         }
         let status = match &self {
             AppError::NotFound => StatusCode::NOT_FOUND,
             AppError::Render(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
-        let tmpl = Tmpl { err: self };
+        let tmpl = Tmpl {
+            page_title: "mic0.dev - Error".to_string(),
+            page_description: status.to_string(),
+            err: self
+         };
         if let Ok(body) = tmpl.render() {
             (status, Html(body)).into_response()
         } else {
@@ -52,9 +58,13 @@ async fn index_handler() -> Result<impl IntoResponse, AppError> {
     #[derive(Debug, Template)]
     #[template(path = "index.html")]
     struct Tmpl {
+        page_title: String,
+        page_description: String,
         articles: Vec<ArticleMeta>,
     }
     let template = Tmpl {
+        page_title: "mic0.dev".to_string(),
+        page_description: "Hey, im mic0! Welcome to my home page.".to_string(),
         articles: get_article_metas(),
     };
     Ok(Html(template.render()?))
@@ -63,8 +73,14 @@ async fn index_handler() -> Result<impl IntoResponse, AppError> {
 async fn cv_handler() -> Result<impl IntoResponse, AppError> {
     #[derive(Debug, Template)]
     #[template(path = "cv.html")]
-    struct Tmpl {}
-    let template = Tmpl {};
+    struct Tmpl {
+        page_title: String,
+        page_description: String,
+    }
+    let template = Tmpl {
+        page_title: "mic0.dev - CV".to_string(),
+        page_description: "CV of mic0".to_string(),
+    };
     Ok(Html(template.render()?))
 }
 
@@ -72,9 +88,13 @@ async fn articles_handler() -> Result<impl IntoResponse, AppError> {
     #[derive(Debug, Template)]
     #[template(path = "articles.html")]
     struct Tmpl {
+        page_title: String,
+        page_description: String,
         articles: Vec<ArticleMeta>,
     }
     let template = Tmpl {
+        page_title: "mic0.dev - Articles".to_string(),
+        page_description: "Articles by mic0".to_string(),
         articles: get_article_metas(),
     };
     Ok(Html(template.render()?))
@@ -90,20 +110,24 @@ async fn article_handler(Path(slug): Path<String>) -> Result<impl IntoResponse, 
     #[derive(Debug, Template)]
     #[template(path = "_article.html")]
     struct Tmpl {
+        page_title: String,
+        page_description: String,
         title: String,
         content: String,
         date_str: String,
         signature_to_display: u8,
         next_article_slug: String,
-        next_article_title: String 
+        next_article_title: String,
     }
     let template = Tmpl {
+        page_title: article.title.clone(),
+        page_description: format!("written by mic0 on {}", article.date_str),
         title: article.title.clone(),
         content: article.content.clone(),
         date_str: article.date_str.clone(),
         signature_to_display: article.signature_to_display,
         next_article_slug: article.next_article_slug.clone(),
-        next_article_title: article.next_article_title.clone()
+        next_article_title: article.next_article_title.clone(),
     };
     Ok(Html(template.render()?))
 }

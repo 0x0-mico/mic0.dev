@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>{% block title %}{% endblock %}</title>
+  <title>{{ page_title }}</title>
+  <meta name="description" content="{{page_description}}">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/png" href="/public/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/public/favicon.svg" />
@@ -11,6 +12,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-title" content="mic0.dev" />
   <link rel="manifest" href="/public/site.webmanifest" />
+
+  <link rel="canonical" href="https://mic0.dev">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="{{ page_title }}">
+  <meta property="og:description" content="mic0.dev homepage">
+  <meta property="og:image" content="/public/social_thumb.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://mic0.dev">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
   <style>
     /*<![CDATA[*/
       {%~include "_layout.css"~%}
