@@ -9,6 +9,12 @@ use syntect::{
 };
 
 #[derive(Debug, Clone, PartialEq, PartialOrd, Default)]
+pub(crate) struct SeoMeta {
+    pub thumbnail: Option<&'static str>,
+    pub description: Option<&'static str>,
+}
+
+#[derive(Debug, Clone, PartialEq, PartialOrd, Default)]
 pub(crate) struct ArticleMeta {
     pub date: NaiveDate,
     pub date_str: String,
@@ -19,6 +25,8 @@ pub(crate) struct ArticleMeta {
     pub signature_to_display: u8,
     pub next_article_title: String,
     pub next_article_slug: String,
+    pub article_uri: &'static str,
+    pub seo_meta: SeoMeta,
 }
 
 impl ArticleMeta {
@@ -30,9 +38,11 @@ impl ArticleMeta {
         signature_to_display: u8,
         next_article_title: String,
         next_article_slug: String,
+        seo_meta: SeoMeta,
     ) -> Self {
         let date_str = date.format("%Y-%m-%d").to_string();
         let slug = filename[..filename.len() - 5].to_string();
+        let article_uri = format!("articles/{}", slug).leak();
         Self {
             date,
             date_str,
@@ -43,6 +53,8 @@ impl ArticleMeta {
             signature_to_display,
             next_article_title,
             next_article_slug,
+            seo_meta,
+            article_uri
         }
     }
 }
@@ -75,8 +87,9 @@ fn load_articles() -> &'static [ArticleMeta] {
                     NaiveDate::parse_from_str(&filename[0..10], "%Y-%m-%d").unwrap_or_default();
                 let slug = &filename;
                 let title = &filename[11..filename.len() - 5].replace("_", " ");
+                let (content, seo_metadata) = extract_seo_metadata(&content);
                 let highlighted_content = highlight_codeblocks(
-                    Rc::new(content),
+                    Rc::new(content.to_string()),
                     syntax_set.clone(),
                     highlighting_theme.clone(),
                 );
@@ -87,7 +100,8 @@ fn load_articles() -> &'static [ArticleMeta] {
                     highlighted_content,
                     0,              // signature_to_display
                     "".to_string(), // next_article_title
-                    "".to_string(), // next_article_slug
+                    "".to_string(), // next_article_slug,
+                    seo_metadata,
                 );
                 metas.push(article_meta);
             }
@@ -114,6 +128,34 @@ fn load_articles() -> &'static [ArticleMeta] {
 
 pub fn get_article_metas() -> &'static [ArticleMeta] {
     &ARTICLES
+}
+
+fn extract_seo_metadata(html: &str) -> (&str, SeoMeta) {
+    let trimmed = html.trim_start();
+    let mut seo_meta = SeoMeta {
+        thumbnail: None,
+        description: None,
+    };
+    if let Some(rest) = trimmed.strip_prefix("<!--")
+        && let Some(end) = rest.find("-->")
+    {
+        let meta: Vec<(&str, &str)> = rest[..end]
+            .lines()
+            .filter_map(|l| l.split_once(':'))
+            .map(|(k, v)| (k.trim(), v.trim()))
+            .collect();
+
+        for (meta_key, meta_value) in meta {
+            match meta_key {
+                "description" => seo_meta.description = Some(meta_value.to_string().leak()),
+                "thumbnail" => seo_meta.thumbnail = Some(meta_value.to_string().leak()),
+                _ => {}
+            }
+        }
+        (&rest[end + 3..], seo_meta)
+    } else {
+        (html, SeoMeta::default())
+    }
 }
 
 fn highlight_codeblocks(html: Rc<String>, ss: Rc<SyntaxSet>, theme: Rc<Theme>) -> String {
