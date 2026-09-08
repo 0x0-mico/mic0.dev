@@ -41,7 +41,7 @@ impl ArticleMeta {
         seo_meta: SeoMeta,
     ) -> Self {
         let date_str = date.format("%Y-%m-%d").to_string();
-        let slug = filename[..filename.len() - 5].to_string();
+        let slug = filename[..filename.len() - 5].to_string().replace(":", "");
         let article_uri = format!("articles/{}", slug).leak();
         Self {
             date,

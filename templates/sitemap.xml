@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://mic0.dev/</loc>{% if let Some(a) = articles.first() %}<lastmod>{{ a.date_str }}</lastmod>{% endif %}</url>
+  <url><loc>https://mic0.dev/articles</loc>{% if let Some(a) = articles.first() %}<lastmod>{{ a.date_str }}</lastmod>{% endif %}</url>
+  <url><loc>https://mic0.dev/cv</loc></url>
+  {%- for a in articles %}
+  <url>
+    <loc>https://mic0.dev/articles/{{ a.slug }}</loc>
+    <lastmod>{{ a.date_str }}</lastmod>
+  </url>
+  {%- endfor %}
+</urlset>

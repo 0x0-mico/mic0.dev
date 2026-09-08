@@ -1,0 +1,55 @@
+# Regular search engines: crawl everything
+User-agent: *
+Allow: /
+
+# --- AI training crawlers: opt out ---
+# OpenAI training (GPTBot); ChatGPT-User is live browsing on a user's behalf
+User-agent: GPTBot
+User-agent: ChatGPT-User
+Disallow: /
+
+# Anthropic
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: anthropic-ai
+Disallow: /
+
+# Google's training opt-out. Does NOT affect Googlebot / search indexing.
+User-agent: Google-Extended
+Disallow: /
+
+# Apple's training opt-out, same idea (Applebot itself still indexes for Siri/Spotlight)
+User-agent: Applebot-Extended
+Disallow: /
+
+# Common Crawl (its dumps are the base of most training sets)
+User-agent: CCBot
+Disallow: /
+
+# ByteDance / TikTok
+User-agent: Bytespider
+Disallow: /
+
+# Meta
+User-agent: meta-externalagent
+User-agent: FacebookBot
+Disallow: /
+
+# Amazon (Alexa/LLM)
+User-agent: Amazonbot
+Disallow: /
+
+# Assorted
+User-agent: cohere-ai
+User-agent: Diffbot
+User-agent: omgili
+User-agent: omgilibot
+User-agent: webzio-extended
+User-agent: ImagesiftBot
+User-agent: AI2Bot
+User-agent: PetalBot
+User-agent: Timpibot
+User-agent: YouBot
+Disallow: /
+
+Sitemap: https://mic0.dev/sitemap.xml

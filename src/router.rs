@@ -2,11 +2,11 @@ use askama::Template;
 use axum::{
     Router,
     extract::Path,
-    http::StatusCode,
+    http::{StatusCode, header},
     response::{Html, IntoResponse, Response},
     routing::get,
 };
-use tower_http::services::ServeDir;
+use tower_http::services::{ServeDir, ServeFile};
 
 use crate::article::{ArticleMeta, get_article_metas};
 
@@ -52,6 +52,8 @@ impl IntoResponse for AppError {
 pub(crate) fn create_router() -> Router {
     Router::new()
         .nest_service("/public", ServeDir::new("public"))
+        .route_service("/robots.txt", ServeFile::new("public/robots.txt"))        
+        .route("/sitemap.xml", get(sitemap_handler))
         .route("/", get(index_handler))
         .route("/cv", get(cv_handler))
         .route("/articles", get(articles_handler))
@@ -163,4 +165,14 @@ async fn article_handler(Path(slug): Path<String>) -> Result<impl IntoResponse, 
         page_metadata
     };
     Ok(Html(template.render()?))
+}
+
+async fn sitemap_handler() -> Result<impl IntoResponse, AppError> {
+    #[derive(Debug, Template)]
+    #[template(path = "sitemap.xml")]
+    struct Tmpl {
+        articles: &'static [ArticleMeta],
+    }
+    let body = Tmpl { articles: get_article_metas() }.render()?;
+    Ok(([(header::CONTENT_TYPE, "application/xml")], body))
 }
