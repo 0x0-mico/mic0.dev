@@ -206,7 +206,7 @@ li:before {
   }
 
   :not(.header) .ascii-graphic {
-    overflow-x: scroll;
+    overflow-x: auto;
   }
 }
 
