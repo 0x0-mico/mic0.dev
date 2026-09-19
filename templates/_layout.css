@@ -170,7 +170,7 @@ li:before {
   text-align: center;
   border: 0;
   color: var(--dark-grey);
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .breakline span {
@@ -185,7 +185,8 @@ li:before {
 .breakline::after {
   font-variant-ligatures: none;
   font-feature-settings: "liga" 0, "calt" 0, "dlig" 0, "hlig" 0;
-  content: "══════════════════════════════════════════════════════════════════════════════════════════"
+  content: "══════════════════════════════════════════════════════════════════════════════════════════";
+  overflow: hidden;
 }
 
 .pos-relative {
